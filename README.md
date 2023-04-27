@@ -23,8 +23,6 @@ More recently, Brandon Bernard released ApacheFOP.Serverless. This is a lightwei
 
 🤔 Wouldn't it be great if we could just write some code and generate a PDF file? 
 
-😭 Why does it have to be so hard?
-
 
 ## The Solution
 **FOP.NetCore** is a new library that offers a pure port of the latest Apache FOP project to .NET Core. With FOP.NetCore, you can now generate your XSL-FO based PDF files directly in your .NET Core project. By simply adding the Nuget package to your .NET Core project, you can now generate PDF files in .NET Core using this library. 

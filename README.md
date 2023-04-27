@@ -26,8 +26,88 @@ This project is based on the great work provided by the IKVM-Revived project. IK
 A pure .NET Core port of Apache FOP using IKVM.
 
 
-# Installation
-1. Install the FOP.NetCore nuget package and its dependency (IKVM 8.4.5)
-2. You will need a `fop.xconf` file. This file just defines the settings for FOP. You can get this file by downloading it directly from the Apache FOP project. I also have included it in this repo.
+# Installation & Usage
+1. **Install Nuget Package** 
 
+    Install the FOP.NetCore nuget package and its dependency (IKVM 8.4.5)
 
+    [![NuGet version (FOP.NetCore)](https://img.shields.io/nuget/v/FOP.NetCore.svg?style=flat-square)](https://www.nuget.org/packages/FOP.NetCore/)
+
+2. **FOP Config File** 
+
+    You will need a `fop.xconf` file included in this repo. This file just defines the settings for FOP. Or You can get this file by downloading it directly from the Apache FOP project.
+
+3. **Sample Code**
+
+    Generate the XSL-FO file (XML to FO) and then transform that into a PDF using the following sample code:
+
+    ```
+    public class Program
+    {
+        static void Main(string[] args)
+        {
+            string foConfFilePath = @"<PATH TO>\fop.xconf";
+            string xmlFilePath = @"<PATH TO>\myxml.xml";
+            string xsltFilePath = @"<PATH TO>\myxslt.xslt";
+
+            //READ THE XML IN AS A STRING
+            string xml = System.IO.File.ReadAllText(xmlFilePath);
+
+            //GENERATE FO
+            byte[] xslFo = GenerateXSLFO(xml, xsltFilePath);
+
+            //GENERATE PDF
+            byte[] pdfByteArray = GeneratePDF(xslFo, foConfFilePath);
+
+            //SAVE PDF
+            System.IO.File.WriteAllBytes("final.pdf", pdfByteArray);
+        }
+
+        private static byte[] GenerateXSLFO(string xml, string xsltFilePath)
+        {
+            using (XmlReader xmlReader = XmlReader.Create(new System.IO.StringReader(xml)))
+            using (var ms = new MemoryStream())
+            {
+                var xslt = new XslCompiledTransform(true);
+                xslt.Load(xsltFilePath);
+                xslt.Transform(xmlReader, null, ms);
+                ms.Position = 0;
+                return ms.ToArray();
+            }
+        }
+
+        public static byte[] GeneratePDF(byte[] inputFo, string fopConfigFilePath)
+        {
+            byte[] finalPDF;
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            try
+            {
+                var fopFactory = (org.apache.fop.apps.FopFactory)org.apache.fop.apps.FopFactory.newInstance(new java.io.File(fopConfigFilePath));
+                var fop = fopFactory.newFop("application/pdf", os);
+                javax.xml.transform.TransformerFactory factory = javax.xml.transform.TransformerFactory.newInstance();
+                javax.xml.transform.Transformer transformer = factory.newTransformer();
+
+                InputStream input = new ByteArrayInputStream(inputFo);
+                javax.xml.transform.Source src = new javax.xml.transform.stream.StreamSource(input);
+
+                javax.xml.transform.Result res = new javax.xml.transform.sax.SAXResult(fop.getDefaultHandler());
+                transformer.transform(src, res);
+
+                finalPDF = os.toByteArray();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                os.close();
+            }
+
+            return finalPDF;
+        }
+    }
+    ```
+
+    You can modify this code as necessary to match your requirements.

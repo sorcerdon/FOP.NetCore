@@ -1,5 +1,5 @@
 # FOP.NetCore
-FOP.NetCore is an open source port of the latest Apache FOP (`Version 2.8`) for .NET Core. Now you can generate PDFs in .NET Core supported by the latest version Apache FOP.
+**FOP.NetCore** is an open source port of the latest Apache FOP (`Version 2.8`) for .NET Core. Now you can generate PDFs in .NET Core supported by the latest version Apache FOP.
 
 This project will work on `.NET Core 3.1` and beyond (`.NET Core 5`, `.NET Core 6`, `.NET Core 7`, etc.)
 

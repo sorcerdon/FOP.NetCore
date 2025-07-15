@@ -53,7 +53,7 @@ I'm thirsty...
 
     Generate the XSL-FO file (XML to FO) and then transform that into a PDF using the following sample code:
 
-    ```
+    ```csharp
     using System;
     using System.IO;
     using System.Xml;
